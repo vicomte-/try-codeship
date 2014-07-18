@@ -1,16 +1,19 @@
 
 # A very simple Flask Hello World app for you to get started with...
 
-from flask import Flask, Response
+from flask import Flask
 
 import requests
 import lxml.html
+from init_this_service import initialize
 
 app = Flask(__name__)
+site_data = initialize()
+
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask! minimal R Version'
+    return 'Hello from Flask! minimal R Version 2014-04-18#1 \n %s' % repr(site_data)
 
 @app.route('/req')
 def show_req():
@@ -27,19 +30,6 @@ def show_berlios():
 
 hosttorequest = 'www.berlios.de'
 
-@app.route('/proxy_berlios')
-def root():
-    r = requests.get('http://' + hosttorequest + '/')
-    headers = r.headers
-##    headers['base'] = 'http://vicomte.pythonanywhere.com/proxy_berlios'
-    resp = Response(r.content, status=r.status_code,
-        mimetype=headers["content-type"])
-    resp.headers.extend({'X-Powered-By': 'AT-5000'})
-    resp.headers.extend(
-        {'base': 'http://vicomte.pythonanywhere.com/proxy_berlios/'})
-    print 'RESP HEADERS:', dict(resp.headers)
-    return  resp
-
 @app.route('/proxy_berlios/<path:other>')
 def other(other):
     r = requests.get('http://' + hosttorequest + '/'+ other)
@@ -49,14 +39,9 @@ def other(other):
 def lxml_belios():
     page = requests.get('http://' + hosttorequest + '/')
     root = lxml.html.fromstring(page.text)
-##    doc = lxml.html.parse('http://' + hosttorequest + '/')
-##    root = doc.getroot()
     print 'LINKS BEFORE:', list(root.iterlinks())[-10:]
-##    root.make_links_absolute('http://vicomte.pythonanywhere.com/lxml_berlios/', resolve_base_href=True)
     root.rewrite_links(replace_url, resolve_base_href=False)
     print 'LINKS AFTER:', list(root.iterlinks())[-10:]
-
-##    return lxml.html.tostring(root, encoding=doc.docinfo.encoding)
     return lxml.html.tostring(root, method='html',)
 
 @app.route('/lxml_berlios/<path:other>')
