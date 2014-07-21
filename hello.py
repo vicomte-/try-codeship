@@ -15,6 +15,10 @@ site_data = initialize()
 def hello_world():
     return 'Hello from Flask! minimal R Version 2014-07-21#6 \n %s' % repr(site_data)
 
+@app.route('/basic')
+def hello_world():
+    return 'Hello from Flask! minimal R Version 2014-07-21#7 deployed by codeship'
+
 @app.route('/req')
 def show_req():
     url = 'http://www.google.com'
