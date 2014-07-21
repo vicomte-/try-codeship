@@ -21,36 +21,25 @@ def show_req():
     webcontent = requests.get(url)
     return 'success downloading %s' % url
 
-@app.route('/berlios')
-def show_berlios():
-    url = 'http://www.berlios.de'
-    webcontent = requests.get(url)
-    print 'success downloading %s' % url
-    return webcontent.content
+@app.route('/redirect/<string:domain>')
+def show_redirect(domain):
 
-hosttorequest = 'www.berlios.de'
+    def replace_url(url):
+        if url and url.startswith('/'):
+            return '/' + domain + url
+        else:
+            return url
 
-@app.route('/proxy_berlios/<path:other>')
-def other(other):
-    r = requests.get('http://' + hosttorequest + '/'+ other)
-    return r.content
-
-@app.route('/lxml_berlios')
-def lxml_belios():
-    page = requests.get('http://' + hosttorequest + '/')
+    page = requests.get('http://' + site_data[domain] + '/')
     root = lxml.html.fromstring(page.text)
     print 'LINKS BEFORE:', list(root.iterlinks())[-10:]
     root.rewrite_links(replace_url, resolve_base_href=False)
     print 'LINKS AFTER:', list(root.iterlinks())[-10:]
     return lxml.html.tostring(root, method='html',)
 
-@app.route('/lxml_berlios/<path:other>')
-def lxml_other(other):
-    r = requests.get('http://' + hosttorequest + '/'+ other)
+@app.route('/redirect/<string:domain>/<path:other>')
+def redirect_other(domain, other):
+    r = requests.get('http://' + site_data[domain] + '/'+ other)
     return r.content
 
-def replace_url(url):
-    if url and url.startswith('/'):
-        return '/lxml_berlios' + url
-    else:
-        return url
+
