@@ -6,6 +6,7 @@ from flask import Flask
 import requests
 import lxml.html
 from init_this_service import initialize
+from urlparse import urlsplit
 
 app = Flask(__name__)
 site_data = initialize()
@@ -13,7 +14,7 @@ site_data = initialize()
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask! minimal R Version 2014-07-21#2 \n %s' % repr(site_data)
+    return 'Hello from Flask! minimal R Version 2014-07-21#5 \n %s' % repr(site_data)
 
 @app.route('/req')
 def show_req():
@@ -25,12 +26,19 @@ def show_req():
 def show_redirect(domain):
 
     def replace_url(url):
-        if url and url.startswith('/'):
-            return '/redirect/' + domain + url
-        else:
-            return url
+        if url:
+            url_parts = urlsplit(url)
+            if url.startswith('/'):
+                return '/redirect/' + domain + url
+            elif not url_parts[0]:
+                return '/redirect/' + domain +'/' + url
+            else:
+                return url
 
-    page = requests.get('http://' + site_data[domain] + '/')
+    try:
+        page = requests.get('http://' + site_data[domain] + '/')
+    except KeyError:
+        return 'No url found for symbol "%s", check ini file.' % domain
     root = lxml.html.fromstring(page.text)
     print 'LINKS BEFORE:', list(root.iterlinks())[-10:]
     root.rewrite_links(replace_url, resolve_base_href=False)
