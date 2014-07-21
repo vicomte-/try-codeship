@@ -4,18 +4,18 @@ from flask import Flask
 
 import requests
 import lxml.html
-from init_this_service import initialize
+## from init_this_service import initialize
 from urlparse import urlsplit
 
 app = Flask(__name__)
-site_data = initialize()
+## site_data = initialize()
 
 
-@app.route('/')
+@app.route('/init')
 def hello_world():
     return 'Hello from Flask! minimal R Version 2014-07-21#6 \n %s' % repr(site_data)
 
-@app.route('/basic')
+@app.route('/')
 def hello_world():
     return 'Hello from Flask! minimal R Version 2014-07-21#7 deployed by codeship'
 
