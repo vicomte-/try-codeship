@@ -13,7 +13,7 @@ site_data = initialize()
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask! minimal R Version 2014-04-18#1 \n %s' % repr(site_data)
+    return 'Hello from Flask! minimal R Version 2014-07-21#2 \n %s' % repr(site_data)
 
 @app.route('/req')
 def show_req():
@@ -26,7 +26,7 @@ def show_redirect(domain):
 
     def replace_url(url):
         if url and url.startswith('/'):
-            return '/' + domain + url
+            return '/redirect/' + domain + url
         else:
             return url
 
