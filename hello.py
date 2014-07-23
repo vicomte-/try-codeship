@@ -19,7 +19,7 @@ def hello_world():
 def hello_world():
     return 'Hello from Flask! minimal R Version 2014-07-21#7 deployed by codeship'
 
-@route('/env')
+@app.route('/env')
 def show_env():
     env_settings = sorted(os.environ.items())
     html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings))
