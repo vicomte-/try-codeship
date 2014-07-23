@@ -19,11 +19,11 @@ def hello_world():
 def hello_world():
     return 'Hello from Flask! minimal R Version 2014-07-21#7 deployed by codeship'
 
-@app.route('/req')
-def show_req():
-    url = 'http://www.google.com'
-    webcontent = requests.get(url)
-    return 'success downloading %s' % url
+@route('/env')
+def show_env():
+    env_settings = sorted(os.environ.items())
+    html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings))
+    return mark_as_preformatted(html)
 
 @app.route('/redirect/<string:domain>')
 def show_redirect(domain):
@@ -52,3 +52,16 @@ def show_redirect(domain):
 def redirect_other(domain, other):
     r = requests.get('http://' + site_data[domain] + '/'+ other)
     return r.content
+
+def brackify(tag):
+    return '<%s>' % tag
+
+def taggify(html, tags):
+    balanced_tags = deque([html])
+    for tag in tags:
+        balanced_tags.appendleft(brackify(tag))
+        balanced_tags.append(brackify('/%s' % tag))
+    return ''.join(balanced_tags)
+
+def mark_as_preformatted(html):
+    return taggify(html, ['pre', 'code'])
