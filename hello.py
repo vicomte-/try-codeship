@@ -24,7 +24,7 @@ def hello_world():
 @app.route('/env')
 def show_env():
     env_settings = sorted(os.environ.items())
-    html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings))
+    html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings if k.startswith('H')))
     return mark_as_preformatted(html)
 
 @app.route('/redirect/<string:domain>')
