@@ -4,6 +4,8 @@ from flask import Flask
 
 import requests
 import lxml.html
+import os
+from collections import deque
 ## from init_this_service import initialize
 from urlparse import urlsplit
 
