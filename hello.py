@@ -22,6 +22,7 @@ if True: #os.environ.get('HEROKU'):
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
+print 'db initiated: %r' % db
 
 class Websites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
