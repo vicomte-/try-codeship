@@ -5,15 +5,21 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 import requests
 import lxml.html
-from init_this_service import initialize
+import os
 from urlparse import urlsplit
+from collections import deque
 
 from datetime import datetime
+
+if os.environ.get('HEROKU'):
+    db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
+else:
+    from init_this_service import initialize
+    db_pwd, site_data = initialize()
+    db_uri = 'mysql://vicomte:%s@mysql.server/vicomte$default' % db_pwd
+
 app = Flask(__name__)
-
-db_pwd, site_data = initialize()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://vicomte:%s@mysql.server/vicomte$default' % db_pwd
-
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
 
 class Websites(db.Model):
@@ -43,7 +49,8 @@ def hello_world():
 @app.route('/sites')
 def show_sites():
     sites = Websites.query.all()
-    return 'sites configured: %s' % '\n<p>'.join(map(str, sites))
+    return 'sites configured: \n%s' % mark_as_preformatted(
+        '\n'.join(map(str, sites)))
 
 @app.route('/sites/add/<string:data>')
 def add_sites(data):
@@ -53,6 +60,24 @@ def add_sites(data):
     db.session.commit()
 
     return 'site added: %s' % newsite
+
+@app.route('/dbcreate')
+def dbcreate():
+    db.create_all()
+    return 'database created'
+
+
+@app.route('/env')
+def show_env():
+    env_settings = sorted(os.environ.items())
+    html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings if k.startswith('H')))
+    return mark_as_preformatted(html)
+
+@app.route('/env/add/<string:data>')
+def add_env(data):
+    k,v = data.split(',')
+    os.environ[k] =  v
+    return 'env added: %s=%s' % (k, v)
 
 @app.route('/redirect/<string:domain>')
 def show_redirect(domain):
@@ -81,3 +106,16 @@ def show_redirect(domain):
 def redirect_other(domain, other):
     r = requests.get('http://' + site_data[domain] + '/'+ other)
     return r.content
+
+def brackify(tag):
+    return '<%s>' % tag
+
+def taggify(html, tags):
+    balanced_tags = deque([html])
+    for tag in tags:
+        balanced_tags.appendleft(brackify(tag))
+        balanced_tags.append(brackify('/%s' % tag))
+    return ''.join(balanced_tags)
+
+def mark_as_preformatted(html):
+    return taggify(html, ['pre', 'code'])
