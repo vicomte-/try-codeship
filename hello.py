@@ -44,7 +44,7 @@ class Websites(db.Model):
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask! minimal R Version 2014-07-21#6 \n %s' % repr(site_data)
+    return 'Hello from Flask! minimal R Version 2014-07-24#1 \n %s' % repr(site_data)
 
 @app.route('/sites')
 def show_sites():
