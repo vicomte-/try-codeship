@@ -72,6 +72,13 @@ def dbcreate():
     print 'database created'
     return 'database created'
 
+@app.route('/debug_switch')
+def switch_debug():
+    debug_status = app.debug
+    print 'debug was %s' % debug_status
+    app.debug = not(debug_status)
+    print 'debug set to %s' % app.debug
+    return 'debug_status switched, now %s' % app.debug
 
 @app.route('/env')
 def show_env():
