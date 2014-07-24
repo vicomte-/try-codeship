@@ -67,7 +67,9 @@ def add_sites(data):
 
 @app.route('/dbcreate')
 def dbcreate():
+    print 'creation of database requested'
     db.create_all()
+    print 'database created'
     return 'database created'
 
 
