@@ -19,13 +19,19 @@ def hello_world():
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask! minimal R Version 2014-07-21#7 deployed by codeship'
+    return 'Hello from Flask! minimal R Version 2014-07-24#1 deployed by codeship'
 
 @app.route('/env')
 def show_env():
     env_settings = sorted(os.environ.items())
     html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings if k.startswith('H')))
     return mark_as_preformatted(html)
+
+@app.route('/env/add/<string:data>')
+def add_env(data):
+    k,v = data.split(',')
+    os.environ[k] =  v
+    return 'env added: %s=%s' % (k, v)
 
 @app.route('/redirect/<string:domain>')
 def show_redirect(domain):
