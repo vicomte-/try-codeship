@@ -13,10 +13,10 @@ from datetime import datetime
 
 if True: #os.environ.get('HEROKU'):
     db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
-else:
-    from init_this_service import initialize
-    db_pwd, site_data = initialize()
-    db_uri = 'mysql://vicomte:%s@mysql.server/vicomte$default' % db_pwd
+##else:
+##    from init_this_service import initialize
+##    db_pwd, site_data = initialize()
+##    db_uri = 'mysql://vicomte:%s@mysql.server/vicomte$default' % db_pwd
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
