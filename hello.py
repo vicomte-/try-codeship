@@ -12,7 +12,8 @@ from collections import deque
 from datetime import datetime
 
 if True: #os.environ.get('HEROKU'):
-    db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
+    db_uri = os.environ.get('DATABASE_URL')
+    print 'db uri read from environ: %s' % db_uri
 ##else:
 ##    from init_this_service import initialize
 ##    db_pwd, site_data = initialize()
