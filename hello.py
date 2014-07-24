@@ -14,6 +14,8 @@ from datetime import datetime
 if True: #os.environ.get('HEROKU'):
     db_uri = os.environ.get('DATABASE_URL')
     print 'db uri read from environ: %s' % db_uri
+    site_data = 'some-data'
+
 ##else:
 ##    from init_this_service import initialize
 ##    db_pwd, site_data = initialize()
