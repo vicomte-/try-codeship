@@ -11,7 +11,7 @@ from collections import deque
 
 from datetime import datetime
 
-if os.environ.get('HEROKU'):
+if True: #os.environ.get('HEROKU'):
     db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
 else:
     from init_this_service import initialize
