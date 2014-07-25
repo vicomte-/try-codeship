@@ -9,7 +9,10 @@ import os
 from urlparse import urlsplit
 from collections import deque
 
-from datetime import datetime
+from datetime import datetime, timedelta
+from functools import wraps
+from flask import session, request, render_template, flash, redirect, url_for
+
 
 if os.environ.get('HEROKU'):
     db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
@@ -20,6 +23,12 @@ else:
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+key = os.environ.get('APP_KEY')
+if key:
+    app.secret_key = key
+else:
+    app.secret_key = os.urandom(24)
+print 'app.secret_key = ', app.secret_key
 db = SQLAlchemy(app)
 
 class Websites(db.Model):
@@ -40,10 +49,19 @@ class Websites(db.Model):
         return '%s|%s|%s' % (self.label, self.url, str(self.created))
 
 
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        ##auth = request.authorization
+        ##if not auth or not check_auth(auth.username, auth.password):
+        ##    return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
 ## from db_model import Websites
 
 @app.route('/')
-def hello_world():
+def default():
     return 'Hello from Flask! minimal R Version 2014-07-21#6 \n %s' % repr(site_data)
 
 @app.route('/sites')
@@ -66,12 +84,35 @@ def dbcreate():
     db.create_all()
     return 'database created'
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != os.environ.get('USER'):
+            error = 'Invalid username'
+        elif request.form['password'] != os.environ.get('PASSWORD'):
+            error = 'Invalid password'
+        else:
+            session['logged_in'] = True
+            session['expiration'] = calc_expiration()
+            flash('You were logged in')
+            return redirect(url_for('default'))
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('default'))
 
 @app.route('/env')
 def show_env():
-    env_settings = sorted(os.environ.items())
-    html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings if k.startswith('H')))
-    return mark_as_preformatted(html)
+    if check_logged_in():
+        env_settings = sorted(os.environ.items())
+        html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings))
+        return mark_as_preformatted(html)
+    else:
+        return logout()
 
 @app.route('/env/add/<string:data>')
 def add_env(data):
@@ -119,3 +160,18 @@ def taggify(html, tags):
 
 def mark_as_preformatted(html):
     return taggify(html, ['pre', 'code'])
+
+def calc_expiration():
+    timeout = os.environ.get('SESSION_TIMEOUT')
+    if not timeout:
+	timeout = 10
+    else:
+        timeout = int(timeout)
+    return datetime.now() + timedelta(seconds=timeout)
+
+def check_logged_in():
+    if session.get('logged_in') :
+        if datetime.now() <= session['expiration']:
+            session['expiration'] = calc_expiration()
+            return True
+    return False
