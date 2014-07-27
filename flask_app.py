@@ -48,14 +48,14 @@ class Websites(db.Model):
     def __str__(self):
         return '%s|%s|%s' % (self.label, self.url, str(self.created))
 
-
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        ##auth = request.authorization
-        ##if not auth or not check_auth(auth.username, auth.password):
-        ##    return authenticate()
+        # #auth = request.authorization
+        if not check_logged_in():
+            return login()
         return f(*args, **kwargs)
+
     return decorated
 
 ## from db_model import Websites
@@ -65,6 +65,7 @@ def default():
     return 'Hello from Flask! minimal R Version 2014-07-21#6 \n %s' % repr(site_data)
 
 @app.route('/sites')
+@requires_auth
 def show_sites():
     sites = Websites.query.all()
     return 'sites configured: \n%s' % mark_as_preformatted(
@@ -88,9 +89,9 @@ def dbcreate():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != os.environ.get('USER'):
+        if request.form['username'] != set_default(os.environ.get('USER'), 'user'):
             error = 'Invalid username'
-        elif request.form['password'] != os.environ.get('PASSWORD'):
+        elif request.form['password'] != set_default(os.environ.get('PASSWORD'), 'pwd'):
             error = 'Invalid password'
         else:
             session['logged_in'] = True
@@ -161,10 +162,16 @@ def taggify(html, tags):
 def mark_as_preformatted(html):
     return taggify(html, ['pre', 'code'])
 
+def set_default(check, default):
+    if check:
+        return check
+    else:
+        return default
+
 def calc_expiration():
     timeout = os.environ.get('SESSION_TIMEOUT')
     if not timeout:
-	timeout = 10
+	timeout = 100
     else:
         timeout = int(timeout)
     return datetime.now() + timedelta(seconds=timeout)
