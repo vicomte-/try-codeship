@@ -83,6 +83,7 @@ def logout():
 @app.route('/env')
 @requires_auth
 def show_env():
+    print 'DEBUG: entered show_env'
     env_settings = sorted(os.environ.items())
     html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings))
     return mark_as_preformatted(html)
