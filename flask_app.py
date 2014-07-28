@@ -16,6 +16,7 @@ else:
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+print 'DEBUG: db-uri set to:', db_uri
 key = os.environ.get('APP_KEY')
 if key:
     app.secret_key = key

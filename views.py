@@ -5,9 +5,9 @@ from urllib import unquote_plus
 from urlparse import urlsplit
 from flask import request, session, flash, url_for, render_template, redirect
 from functools import wraps
+from flask_app import app, db
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default
-from flask_app import app, db
 from models import Websites
 
 __author__ = 'Surfer'
@@ -25,13 +25,14 @@ def requires_auth(f):
 
 @app.route('/')
 def default():
-    return 'Hello from Flask! minimal R Version 2014-07-28#1 '
+    return 'Hello from Flask! minimal R Version 2014-07-28#2 '
 
 
 @app.route('/sites')
 @requires_auth
 def show_sites():
     print 'DEBUG: db-conn-str' , app.config.get('SQLALCHEMY_DATABASE_URI')
+    print 'DEBUG: Websites' , Websites
     sites = Websites.query.all()
     return 'sites configured: \n%s' % mark_as_preformatted(
         '\n'.join(map(str, sites)))
@@ -44,8 +45,16 @@ def add_sites(data):
     newsite = Websites(label, url)
     db.session.add(newsite)
     db.session.commit()
-
     return 'site added: %s' % newsite
+
+
+@app.route('/debug_switch')
+def switch_debug():
+    debug_status = app.debug
+    print 'debug was %s' % debug_status
+    app.debug = not(debug_status)
+    print 'debug set to %s' % app.debug
+    return 'debug_status switched, now %s' % app.debug
 
 
 @app.route('/dbcreate')
