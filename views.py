@@ -7,7 +7,7 @@ from flask import request, session, flash, url_for, render_template, redirect
 from functools import wraps
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default
-from flask_app import app, db, site_data
+from flask_app import app, db
 from models import Websites
 
 __author__ = 'Surfer'
@@ -25,7 +25,7 @@ def requires_auth(f):
 
 @app.route('/')
 def default():
-    return 'Hello from Flask! minimal R Version 2014-07-21#6 \n %s' % repr(site_data)
+    return 'Hello from Flask! minimal R Version 2014-07-28#1 '
 
 
 @app.route('/sites')

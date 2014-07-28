@@ -10,7 +10,7 @@ if os.environ.get('HEROKU'):
 else:
     from init_this_service import initialize
 
-    db_pwd, site_data = initialize()
+    db_pwd, _ = initialize()
     db_uri = 'mysql://vicomte:%s@mysql.server/vicomte$default' % db_pwd
 
 app = Flask(__name__)
