@@ -7,6 +7,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 if os.environ.get('HEROKU'):
     db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
+    print 'DEBUG: starting on heroku'
 else:
     from init_this_service import initialize
 
@@ -20,6 +21,7 @@ if key:
     app.secret_key = key
 else:
     app.secret_key = os.urandom(24)
+    print 'DEBUG: new key generated'
 print 'app.secret_key = ', app.secret_key
 db = SQLAlchemy(app)
 

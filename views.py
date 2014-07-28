@@ -31,6 +31,7 @@ def default():
 @app.route('/sites')
 @requires_auth
 def show_sites():
+    print 'DEBUG: db-conn-str' , app.config.get('SQLALCHEMY_DATABASE_URI')
     sites = Websites.query.all()
     return 'sites configured: \n%s' % mark_as_preformatted(
         '\n'.join(map(str, sites)))
