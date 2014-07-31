@@ -1,14 +1,18 @@
 import os
-import lxml.html
-import requests
 from urllib import unquote_plus
 from urlparse import urlsplit
-from flask import request, session, flash, url_for, render_template, redirect
 from functools import wraps
-from flask_app import app, db
+
+import lxml.html
+import requests
+from flask import request, session, flash, url_for, render_template, redirect
+
+from redirecter import app, db
+from redirecter import site_data
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default
 from models import Websites
+
 
 __author__ = 'Surfer'
 
@@ -31,8 +35,8 @@ def default():
 @app.route('/sites')
 @requires_auth
 def show_sites():
-    print 'DEBUG: db-conn-str' , app.config.get('SQLALCHEMY_DATABASE_URI')
-    print 'DEBUG: Websites' , Websites
+    print 'DEBUG: db-conn-str', app.config.get('SQLALCHEMY_DATABASE_URI')
+    print 'DEBUG: Websites', Websites
     sites = Websites.query.all()
     return 'sites configured: \n%s' % mark_as_preformatted(
         '\n'.join(map(str, sites)))
@@ -52,7 +56,7 @@ def add_sites(data):
 def switch_debug():
     debug_status = app.debug
     print 'debug was %s' % debug_status
-    app.debug = not(debug_status)
+    app.debug = not debug_status
     print 'debug set to %s' % app.debug
     return 'debug_status switched, now %s' % app.debug
 

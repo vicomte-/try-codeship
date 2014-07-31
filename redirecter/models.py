@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_app import db
+from redirecter import db
 
 __author__ = 'Surfer'
 
