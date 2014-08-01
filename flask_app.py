@@ -1,3 +1,2 @@
-#!/usr/bin/python
-from redirecter import app
-app.run(debug=False)
+from red import app
+##app.run(debug=True)
