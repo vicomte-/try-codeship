@@ -123,7 +123,8 @@ def show_redirect(domain):
                 return url
 
     try:
-        page = requests.get('http://' + site_data[domain] + '/')
+        website_data = Websites.query.filter_by(label=domain).first()
+        page = requests.get('http://' + website_data.url + '/')
     except KeyError:
         return 'No url found for symbol "%s", check ini file.' % domain
     root = lxml.html.fromstring(page.text)
@@ -135,5 +136,6 @@ def show_redirect(domain):
 
 @app.route('/redirect/<string:domain>/<path:other>')
 def redirect_other(domain, other):
-    r = requests.get('http://' + site_data[domain] + '/' + other)
+    website_data = Websites.query.filter_by(label=domain).first()
+    r = requests.get('http://' + website_data.url + '/' + other)
     return r.content
