@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # A very simple Flask Hello World app for you to get started with...
 
 from flask import Flask
@@ -182,3 +183,7 @@ def check_logged_in():
             session['expiration'] = calc_expiration()
             return True
     return False
+=======
+from red import app
+##app.run(debug=True)
+>>>>>>> 0a5dad7db70f6a7048bda628f598c6a44d14b6bb
