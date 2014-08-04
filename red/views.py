@@ -1,10 +1,12 @@
-from red import app
+from red import app, db
 import os
 from functools import wraps
+from flask import request, session, flash, url_for, render_template, redirect
+from urllib import unquote_plus
+from urlparse import urlsplit
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default
-from flask import request, session, flash, url_for, render_template, redirect
-
+from models import Websites
 
 @app.route('/')
 def index():
@@ -62,3 +64,21 @@ def show_env():
     html = '\n'.join(('%s = %s' % (k, v) for k, v in env_settings))
     return mark_as_preformatted(html)
 
+@app.route('/sites')
+@requires_auth
+def show_sites():
+    print 'DEBUG: db-conn-str', app.config.get('SQLALCHEMY_DATABASE_URI')
+    print 'DEBUG: Websites', Websites
+    sites = Websites.query.all()
+    return 'sites configured: \n%s' % mark_as_preformatted(
+        '\n'.join(map(str, sites)))
+
+
+@app.route('/sites/add/<string:data>')
+@requires_auth
+def add_sites(data):
+    label, url = map(unquote_plus, data.split(','))
+    newsite = Websites(label, url)
+    db.session.add(newsite)
+    db.session.commit()
+    return 'site added: %s' % newsite
