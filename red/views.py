@@ -58,6 +58,20 @@ def logout():
     return redirect(url_for('default'))
 
 
+@app.route('/new_entry', methods=['GET', 'POST'])
+@requires_auth
+def get_new_entry():
+    error = None
+    if request.method == 'POST':
+        label = request.form['label']
+        url = request.form['url']
+        newsite = Websites(label, url)
+        db.session.add(newsite)
+        db.session.commit()
+        return 'site added: %s' % newsite
+    return render_template('entry.html', error=error)
+
+
 @app.route('/env')
 @requires_auth
 def show_env():
