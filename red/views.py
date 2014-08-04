@@ -1,5 +1,7 @@
 from red import app, db
 import os
+import requests
+import lxml.html
 from functools import wraps
 from flask import request, session, flash, url_for, render_template, redirect
 from urllib import unquote_plus
@@ -10,7 +12,7 @@ from models import Websites
 
 @app.route('/')
 def index():
-    return 'Hello World!'
+    return 'Hello from Flask! minimal R Version 2014-08-04#1 '
 
 @app.route('/default')
 def default():
@@ -82,3 +84,49 @@ def add_sites(data):
     db.session.add(newsite)
     db.session.commit()
     return 'site added: %s' % newsite
+
+@app.route('/debug_switch')
+def switch_debug():
+    debug_status = app.debug
+    print 'debug was %s' % debug_status
+    app.debug = not debug_status
+    print 'debug set to %s' % app.debug
+    return 'debug_status switched, now %s' % app.debug
+
+
+@app.route('/dbcreate')
+@requires_auth
+def dbcreate():
+    db.create_all()
+    return 'database created'
+
+@app.route('/redirect/<string:domain>')
+def show_redirect(domain):
+    def replace_url(url):
+        if url:
+            url_parts = urlsplit(url)
+            if url.startswith('/'):
+                return '/redirect/' + domain + url
+            elif not url_parts.scheme:
+                return '/redirect/' + domain + '/' + url
+            else:
+                return url
+
+    try:
+        website_data = Websites.query.filter_by(label=domain).first()
+        page = requests.get('http://' + website_data.url + '/')
+    except KeyError:
+        return 'No url found for symbol "%s", check ini file.' % domain
+    root = lxml.html.fromstring(page.text)
+    # #    print 'LINKS BEFORE:', list(root.iterlinks())[-10:]
+    root.rewrite_links(replace_url, resolve_base_href=False)
+    # #    print 'LINKS AFTER:', list(root.iterlinks())[-10:]
+    return lxml.html.tostring(root, method='html', )
+
+
+@app.route('/redirect/<string:domain>/<path:other>')
+def redirect_other(domain, other):
+    website_data = Websites.query.filter_by(label=domain).first()
+    r = requests.get('http://' + website_data.url + '/' + other)
+    return r.content
+
