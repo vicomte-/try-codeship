@@ -4,7 +4,8 @@ import os
 app = Flask(__name__)
 
 if os.environ.get('HEROKU'):
-    db_uri = os.environ.get('POSTGRESQL_BLUE_URL')
+    print 'DEBUG: Heroku plattform detected'
+    db_uri = os.environ.get('HEROKU_POSTGRESQL_BLUE_URL')
 else:
     from init_this_service import initialize
     db_pwd, site_data = initialize()
