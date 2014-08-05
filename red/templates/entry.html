@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h2>Login</h2>
+  <h2>Neuer Eintrag</h2>
   {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
   <form action="{{ url_for('get_new_entry') }}" method=post>
     <dl>
@@ -8,7 +8,7 @@
       <dd><input type=text name=label>
       <dt>URL:
       <dd><input type=text name=url>
-      <dd><input type=submit value=Login>
+      <dd><input type=submit value=OK>
     </dl>
   </form>
 {% endblock %}

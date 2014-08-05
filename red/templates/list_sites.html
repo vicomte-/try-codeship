@@ -1,0 +1,6 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% for site in websites %}
+    <div><p>{{site.id}} <b>{{site.label}}</b></p> {{site.url}} {{site.created}}</div>
+  {% endfor %}
+{% endblock %}
