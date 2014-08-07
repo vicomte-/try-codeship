@@ -1,6 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
   {% for site in websites %}
-    <div><p>{{site.id}} <b>{{site.label}}</b></p> {{site.url}} {{site.created}}</div>
+    <div><p>{{site.id}} <b>{{site.label}}</b></p> {{site.url}} {{site.created}}
+        <a href="sites/delete/{{site.id}}"> delete </a> #
+        <a href="edit_entry/{{site.id}}"> edit </a>
+{#        <a href="{{url_for('edit_entry')}}/{{site.id}}"> edit </a> #}
+{# don't know why this url_for ^ doesn't work #}
+    </div>
   {% endfor %}
+  <a href="{{url_for('get_new_entry')}}"> new entry </a>
 {% endblock %}

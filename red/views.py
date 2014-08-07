@@ -12,7 +12,7 @@ from models import Websites
 
 @app.route('/')
 def index():
-    return 'Hello from Flask! minimal R Version 2014-08-04#1 '
+    return 'Hello from Flask! minimal R Version 2014-08-07#1 '
 
 @app.route('/default')
 def default():
@@ -72,6 +72,12 @@ def get_new_entry():
     return render_template('entry.html', error=error)
 
 
+@app.route('/edit_entry/<string:id>', methods=['GET', 'POST'])
+@requires_auth
+def edit_entry(id):
+    return 'placeholder for editing entry "%s"' % id
+
+
 @app.route('/env')
 @requires_auth
 def show_env():
@@ -97,6 +103,14 @@ def add_sites(data):
     db.session.add(newsite)
     db.session.commit()
     return 'site added: %s' % newsite
+
+@app.route('/sites/delete/<string:id>')
+@requires_auth
+def delete_site(id):
+    entry = Websites.query.filter_by(id=id).first()
+    db.session.delete(entry)
+    db.session.commit()
+    return 'site deleted: %s' % entry
 
 @app.route('/debug_switch')
 def switch_debug():
