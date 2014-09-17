@@ -157,3 +157,15 @@ def redirect_other(domain, other):
     r = requests.get('http://' + website_data.url + '/' + other)
     return r.content
 
+
+@requires_auth
+@app.route('/single_url', methods=['GET', 'POST'])
+def single_url():
+    error = None
+    if request.method == 'POST':
+        url = request.form['url']
+        print 'requested url "%s"' % url
+        return requests.get(url).content
+    else:
+        return render_template('single_url.html', error=error)
+
