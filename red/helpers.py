@@ -1,4 +1,5 @@
 import os
+import base64
 from datetime import datetime, timedelta
 from flask import session
 from collections import deque
@@ -44,3 +45,11 @@ def set_default(check, default):
         return check
     else:
         return default
+
+
+def encode_url(url):
+    return base64.b64encode(url)
+
+
+def decode_url(encoded):
+    return base64.b64decode(encoded)

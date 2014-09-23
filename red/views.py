@@ -7,7 +7,7 @@ from flask import request, session, flash, url_for, render_template, redirect
 from urllib import unquote_plus
 from urlparse import urlsplit
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
-from helpers import set_default
+from helpers import set_default, encode_url, decode_url
 from models import Websites
 
 @app.route('/')
@@ -163,9 +163,17 @@ def redirect_other(domain, other):
 def single_url():
     error = None
     if request.method == 'POST':
-        url = request.form['url']
-        print 'requested url "%s"' % url
-        return requests.get(url).content
+        url_entered = request.form['url']
+        print 'requested url "%s"' % url_entered
+        return redirect(url_for('show_url_encoded',
+                                 url=encode_url(url_entered)))
+##        return requests.get(url).content
     else:
         return render_template('single_url.html', error=error)
 
+
+@requires_auth
+@app.route('/url_encoded/<url>')
+def show_url_encoded(url):
+        res = requests.get(decode_url(url))
+        return res.content
