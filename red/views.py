@@ -12,7 +12,7 @@ from models import Websites
 
 @app.route('/')
 def index():
-    return 'Hello from Flask! minimal R Version 2014-08-07#1 '
+    return 'Hello from Flask! minimal R Version 2014-10-23# "crud" '
 
 @app.route('/default')
 def default():
