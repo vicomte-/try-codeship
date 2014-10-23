@@ -1,7 +1,10 @@
 from flask import Flask
+from flask.ext.admin import Admin
 from flask.ext.sqlalchemy import SQLAlchemy
 import os
+
 app = Flask(__name__)
+admin = Admin(app)
 
 if os.environ.get('HEROKU'):
     print 'DEBUG: Heroku plattform detected'

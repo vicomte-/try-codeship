@@ -7,7 +7,7 @@ class Websites(db.Model):
     url = db.Column(db.String(120), unique=False)
     created = db.Column(db.DateTime)
 
-    def __init__(self, label, url):
+    def __init__(self, label = "", url = ""):
         self.label = label
         self.url = url
         self.created = datetime.utcnow()

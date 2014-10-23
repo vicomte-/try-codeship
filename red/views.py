@@ -1,14 +1,17 @@
-from red import app, db
+from red import app, db, admin
 import os
 import requests
 import lxml.html
 from functools import wraps
 from flask import request, session, flash, url_for, render_template, redirect
+from flask.ext.admin.contrib.sqla import ModelView
 from urllib import unquote_plus
 from urlparse import urlsplit
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default, encode_url, decode_url
 from models import Websites
+
+admin.add_view(ModelView(Websites, db.session))
 
 @app.route('/')
 def index():
@@ -177,3 +180,4 @@ def single_url():
 def show_url_encoded(url):
         res = requests.get(decode_url(url))
         return res.content
+
