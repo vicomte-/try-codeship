@@ -11,11 +11,15 @@ from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default, encode_url, decode_url
 from models import Websites
 
-admin.add_view(ModelView(Websites, db.session))
+class AuthModelView(ModelView):
+    def is_accessible(self):
+        return check_logged_in()
+
+admin.add_view(AuthModelView(Websites, db.session))
 
 @app.route('/')
 def index():
-    return 'Hello from Flask! minimal R Version 2014-10-23# "crud" '
+    return 'Hello from Flask! minimal R Version 2014-10-24# "crud" '
 
 @app.route('/default')
 def default():
