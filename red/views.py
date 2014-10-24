@@ -131,6 +131,7 @@ def switch_debug():
 @app.route('/dbcreate')
 @requires_auth
 def dbcreate():
+    db.drop_all()
     db.create_all()
     return 'database created'
 

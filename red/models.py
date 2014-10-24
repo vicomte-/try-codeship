@@ -5,11 +5,13 @@ class Websites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String(40), unique=True)
     url = db.Column(db.String(120), unique=False)
+    payload = db.Column(db.String(120), unique=False)
     created = db.Column(db.DateTime)
 
-    def __init__(self, label = "", url = ""):
+    def __init__(self, label = "", url = "", payload = ""):
         self.label = label
         self.url = url
+        self.payload = payload
         self.created = datetime.utcnow()
 
     def __repr__(self):
