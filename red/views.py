@@ -2,6 +2,7 @@ from red import app, db, admin
 import os
 import requests
 import lxml.html
+from flask import json
 from functools import wraps
 from flask import request, session, flash, url_for, render_template, redirect
 from flask.ext.admin.contrib.sqla import ModelView
@@ -100,6 +101,12 @@ def show_sites():
     print 'DEBUG: Websites', Websites
     sites = Websites.query.all()
     return render_template('list_sites.html', websites=sites)
+
+@app.route('/data/export')
+@requires_auth
+def show_data():
+    sites = [s.make_dict() for s in Websites.query.all()]
+    return json.dumps(sites)
 
 
 @app.route('/sites/add/<string:data>')

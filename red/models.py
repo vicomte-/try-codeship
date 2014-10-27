@@ -20,3 +20,5 @@ class Websites(db.Model):
     def __str__(self):
         return '%s|%s|%s' % (self.label, self.url, str(self.created))
 
+    def make_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
