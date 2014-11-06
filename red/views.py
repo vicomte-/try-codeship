@@ -2,7 +2,7 @@ from red import app, db, admin
 import os
 import requests
 import lxml.html
-from flask import json
+from flask import json, jsonify
 from functools import wraps
 from flask import request, session, flash, url_for, render_template, redirect
 from flask.ext.admin.contrib.sqla import ModelView
@@ -106,7 +106,8 @@ def show_sites():
 @requires_auth
 def show_data():
     sites = [s.make_dict() for s in Websites.query.all()]
-    return json.dumps(sites)
+##    return json.dumps(sites)
+    return jsonify(data = sites)
 
 
 @app.route('/sites/add/<string:data>')
