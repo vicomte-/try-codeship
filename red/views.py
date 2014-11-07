@@ -2,7 +2,8 @@ from red import app, db, admin
 import os
 import requests
 import lxml.html
-from flask import json, jsonify
+from flask import jsonify
+from flask.json import loads
 from functools import wraps
 from flask import request, session, flash, url_for, render_template, redirect
 from flask.ext.admin.contrib.sqla import ModelView
@@ -10,6 +11,7 @@ from urllib import unquote_plus
 from urlparse import urlsplit
 from helpers import check_logged_in, mark_as_preformatted, calc_expiration
 from helpers import set_default, encode_url, decode_url
+from helpers import clear_and_import_data
 from models import Websites
 
 class AuthModelView(ModelView):
@@ -106,8 +108,18 @@ def show_sites():
 @requires_auth
 def show_data():
     sites = [s.make_dict() for s in Websites.query.all()]
-##    return json.dumps(sites)
     return jsonify(data = sites)
+
+
+@app.route('/data/import', methods=['GET', 'POST'])
+@requires_auth
+def import_data():
+    error = None
+    if request.method == 'POST':
+        data = loads(request.form['data'])
+        clear_and_import_data(data)
+        return 'import mock: %s' % repr(data)
+    return render_template('import.html', error=error)
 
 
 @app.route('/sites/add/<string:data>')

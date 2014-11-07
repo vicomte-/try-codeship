@@ -1,8 +1,10 @@
 import os
 import base64
+from red import db
 from datetime import datetime, timedelta
 from flask import session
 from collections import deque
+from models import Websites
 
 __author__ = 'Surfer'
 
@@ -45,6 +47,20 @@ def set_default(check, default):
         return check
     else:
         return default
+
+
+def clear_and_import_data(data):
+    db.drop_all()
+    db.create_all()
+    for k, v in data.items():
+        websites = v
+        for site in websites:
+            for col, val in site.items():
+                print '%s-->%s' % (col, val),
+            print '\n'
+            newsite = Websites(**site)
+            db.session.add(newsite)
+            db.session.commit()
 
 
 def encode_url(url):

@@ -8,11 +8,14 @@ class Websites(db.Model):
     payload = db.Column(db.String(120), unique=False)
     created = db.Column(db.DateTime)
 
-    def __init__(self, label = "", url = "", payload = ""):
+    def __init__(self, label = "", url = "", payload = "", created=""):
         self.label = label
         self.url = url
         self.payload = payload
-        self.created = datetime.utcnow()
+        if created:
+            self.created = created
+        else:
+            self.created = datetime.utcnow()
 
     def __repr__(self):
         return '<Website %r>' % self.label
