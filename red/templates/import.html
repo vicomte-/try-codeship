@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Datenimport</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+  <form action="{{ url_for('import_data') }}" method=post>
+    <dl>
+      <dt>data:
+      <dd><textarea name="data" cols="50" rows="20"></textarea>
+      <dd><input type=submit value=OK>
+      </dl>
+  </form>
+{% endblock %}
