@@ -1,10 +1,10 @@
 import os
 import base64
-from red import db
 from datetime import datetime, timedelta
 from flask import session
 from collections import deque
-from models import Websites
+from email.utils import parsedate_tz, mktime_tz
+
 
 __author__ = 'Surfer'
 
@@ -49,7 +49,7 @@ def set_default(check, default):
         return default
 
 
-def clear_and_import_data(data):
+def clear_and_import_data(data, db, data_object):
     db.drop_all()
     db.create_all()
     for k, v in data.items():
@@ -58,9 +58,17 @@ def clear_and_import_data(data):
             for col, val in site.items():
                 print '%s-->%s' % (col, val),
             print '\n'
-            newsite = Websites(**site)
+            newsite = data_object(**site)
             db.session.add(newsite)
             db.session.commit()
+
+
+def is_it_text(s):
+    return isinstance(s, str) or isinstance(s, unicode)
+
+
+def convert_time_fromstring(verbose):
+    return datetime.utcfromtimestamp(mktime_tz(parsedate_tz(verbose)))
 
 
 def encode_url(url):

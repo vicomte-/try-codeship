@@ -117,7 +117,7 @@ def import_data():
     error = None
     if request.method == 'POST':
         data = loads(request.form['data'])
-        clear_and_import_data(data)
+        clear_and_import_data(data, db, Websites)
         return 'import mock: %s' % repr(data)
     return render_template('import.html', error=error)
 
