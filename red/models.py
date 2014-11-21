@@ -10,9 +10,6 @@ class Websites(db.Model):
     created = db.Column(db.DateTime)
 
     def __init__(self, label = "", url = "", payload = "", created = ""):
-        print 'New entry label: %s, url: %s, payload: %s, creation: %s' % (
-            label, url, payload, created)
-        print 'created:%s:%s:%s' % (created, type(created), repr(created))
         self.label = label
         self.url = url
         self.payload = payload

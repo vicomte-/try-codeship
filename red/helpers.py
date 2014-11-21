@@ -52,15 +52,15 @@ def set_default(check, default):
 def clear_and_import_data(data, db, data_object):
     db.drop_all()
     db.create_all()
+    count = 0
     for k, v in data.items():
         websites = v
+        count += len(websites)
         for site in websites:
-            for col, val in site.items():
-                print '%s-->%s' % (col, val),
-            print '\n'
             newsite = data_object(**site)
             db.session.add(newsite)
             db.session.commit()
+    return "%d Entries imported." % count
 
 
 def is_it_text(s):
